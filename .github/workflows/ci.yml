@@ -10,10 +10,7 @@ on:
 # Use a matrix to test on ubuntu-latest and ubuntu-18.04
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, ubuntu-18.04]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
