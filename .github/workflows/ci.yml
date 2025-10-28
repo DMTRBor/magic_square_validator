@@ -1,0 +1,67 @@
+name: C (make) CI
+
+# Run on push to any branch and on pull requests
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+# Use a matrix to test on ubuntu-latest and ubuntu-18.04
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-18.04]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Show runner OS info
+        run: |
+          uname -a
+          lsb_release -a || true
+
+      - name: Install build tools (gcc, make)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      # Force C89 flags by overriding CC or CFLAGS; adjust if your makefile already sets them
+      - name: Build (make)
+        env:
+          # override if you want strict ANSI C (C89 / C90)
+          CC: gcc
+          CFLAGS: "-std=c89 -pedantic -Wall"
+        run: |
+          make clean || true
+          make
+
+      # Run the binary (if your makefile produces ./magic)
+      - name: Run tests / sample run
+        if: always()
+        run: |
+          if [ -x ./magic ]; then
+            echo "Running ./magic with sample input 1:"
+            ./magic < test/sum_65.txt
+            echo "Running ./magic with sample input 2:"
+            ./magic < test/sum_70.txt
+            echo "Running ./magic with sample input 3:"
+            ./magic < test/sum_80.txt
+            echo "Running ./magic with sample input 4:"
+            ./magic < test/sum_82.txt
+          else
+            echo "./magic not found or not executable"
+            ls -la
+          fi
+
+      - name: Upload build artifacts (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: magic-build
+          path: |
+            ./magic
+            ./*.o
