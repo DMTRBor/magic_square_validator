@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [ "**" ]
 
-# Use a matrix to test on ubuntu-latest and ubuntu-18.04
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,10 +25,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential
 
-      # Force C89 flags by overriding CC or CFLAGS; adjust if your makefile already sets them
+      # Force C89 flags by overriding CC or CFLAGS;
       - name: Build (make)
         env:
-          # override if you want strict ANSI C (C89 / C90)
           CC: gcc
           CFLAGS: "-std=c89 -pedantic -Wall"
         run: |
