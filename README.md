@@ -36,7 +36,7 @@ Windows
 call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 # Compile all C sources into magic.exe
-cl /nologo /W4 /EHsc /std:c89 magic.c input_utils.c square_utils.c
+cl /nologo /W4 /EHsc /std:c89 /Fe:magic.exe *.c
 ```
 
 
